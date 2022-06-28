@@ -5,7 +5,10 @@ import {useSession} from "next-auth/react"
 import LoginBtn from "../components/login-btn";
 
 const Home: NextPage = () => {
-    const {data: session} = useSession()
+    const {data: session, status} = useSession()
+    if (status === 'loading') {
+        return (<></>)
+    }
     if (!session) {
         return (
             <>
