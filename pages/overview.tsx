@@ -5,8 +5,9 @@ import LoginBtn from "../components/login-btn";
 import {GetServerSideProps} from "next";
 import {Club} from "../models/club";
 import ClubList from "../components/clubList";
-import {Badge, Button, Popover, Text} from '@mantine/core';
+import {Badge} from '@mantine/core';
 import {useState} from "react";
+import ClubModal from "../components/clubModal";
 
 
 export default function Overview(props: any) {
@@ -15,7 +16,7 @@ export default function Overview(props: any) {
     if (status === 'loading') {
         return (<></>)
     }
-    if (!session) {
+    if (!session || !session.user || !session.user.email) {
         return (
             <>
                 <div className="flex flex-col items-center justify-center h-screen">
@@ -31,10 +32,9 @@ export default function Overview(props: any) {
 
     //sort alphabetically
     clubs = clubs.sort((a, b) => a.name.localeCompare(b.name))
-    const ownClubs: Club[] = clubs.filter(club => club.teacher == session.user?.name)
+    // @ts-ignore
+    const ownClubs: Club[] = clubs.filter(club => club.teacher.includes(session.user?.name))
 
-
-    //TODO: user Mantine Drawer to edit the clubs
 
     return (
         <div>
@@ -48,22 +48,7 @@ export default function Overview(props: any) {
                     <Sidebar/>
                     <div>
                         <div className="float-right m-4">
-                            <Popover
-                                opened={opened}
-                                onClose={() => setOpened(false)}
-                                target={<Button onClick={() => setOpened((o) => !o)} variant="outline" radius="md"
-                                                size="md">
-                                    Neue AG
-                                </Button>}
-                                width={170}
-                                position="bottom"
-                                withArrow
-                            >
-                                <div style={{display: 'flex', color: "red"}}>
-                                    <Text size="sm">Not yet implemented</Text>
-                                </div>
-                            </Popover>
-
+                            <ClubModal buttonName={"Neue AG"}/>
                         </div>
                         <div>
                             {ownClubs.length > 0 &&
