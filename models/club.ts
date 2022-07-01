@@ -8,8 +8,9 @@ export interface Club extends Document {
     date: string,
     lesson: number[],
     room: string,
-    teacher: string,
-    talentPromotion: boolean
+    teacher: string[],
+    talentPromotion: boolean,
+    active: boolean
 }
 
 const ClubsSchema: Schema = new Schema({
@@ -19,8 +20,9 @@ const ClubsSchema: Schema = new Schema({
     date: {type: String, required: true},
     lesson: {type: [Number], required: true},
     room: {type: String, required: true},
-    teacher: {type: String, required: true},
+    teacher: {type: [String], required: true},
     talentPromotion: {type: Boolean, required: true, default: false},
+    active: {type: Boolean, required: true, default: true}
 })
 
 module.exports = mongoose.models.clubs || mongoose.model<Club>("clubs", ClubsSchema);
