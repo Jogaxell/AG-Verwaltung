@@ -22,15 +22,22 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
     // @ts-ignore
     const [date, setDate] = useState<string[]>(null);
 
+    //variables to set the values checked
+    let active = club ? club.active : true;
+    let talentPromotion = club ? club.active : false;
+
     const form = useForm({
         initialValues: {
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            passwordConfirm: "",
-            termsOfService: true,
-        },
+            titel: club?.name || "",
+            description: club?.description || "",
+            grade: club?.grade || "",
+            date: club?.date || "",
+            lesson: club?.lesson || "",
+            room: club?.room || "",
+            teacher: club?.teacher || "",
+            talentPromotion: talentPromotion,
+            active: active,
+        }
     })
 
     const handleSubmit = () => {
@@ -62,6 +69,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             variant="filled"
                             placeholder="Titel"
                             mt="md"
+                            {...form.getInputProps('titel')}
                         />
 
                         <Textarea
@@ -73,6 +81,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             minRows={2}
                             maxRows={7}
                             mt="md"
+                            {...form.getInputProps("description")}
                         />
 
                         <MultiSelect
@@ -88,7 +97,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             label="Jahrgang"
                             placeholder="5, 6, 7, 8, 9, 10, 11, 12"
                             variant="filled"
-                            value={jahrgang}
+                            value={form.getInputProps('grade') || jahrgang}
                             onChange={
                                 (value) => {
                                     setJahrgang(value.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)))
@@ -108,7 +117,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                                 {label: "nach Vereinbarung", value: "9"}]}
                             label="Datum"
                             variant="filled"
-                            value={date}
+                            value={form.getInputProps('date') || date}
                             onChange={(value) => {
                                 setDate(value.sort())
                             }}
@@ -122,6 +131,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             placeholder="8./9."
                             variant="filled"
                             mt="md"
+                            {...form.getInputProps('lesson')}
                         />
 
                         <TextInput
@@ -130,6 +140,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             placeholder="A137"
                             variant="filled"
                             mt="md"
+                            {...form.getInputProps('room')}
                         />
 
                         <TextInput
@@ -139,19 +150,21 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             placeholder="Volker Ovelgönne"
                             variant="filled"
                             mt="md"
+                            {...form.getInputProps('teacher')}
                         />
 
                         <Checkbox
                             required
                             label="Begabungsförderung"
                             mt="md"
+                            checked={talentPromotion}
                         />
 
                         <Checkbox
                             required
                             label="Aktiv"
                             mt="md"
-                            checked={true}
+                            checked={active}
                         />
 
                         <Button mt="md" color="blue" variant="outline" type="submit">
