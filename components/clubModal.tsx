@@ -1,4 +1,4 @@
-import {Button, Checkbox, LoadingOverlay, Modal, MultiSelect, Textarea, TextInput} from "@mantine/core";
+import {Alert, Button, Checkbox, LoadingOverlay, Modal, MultiSelect, Textarea, TextInput} from "@mantine/core";
 import {useState} from "react";
 import {useForm} from "@mantine/form";
 import {Club} from "../models/club";
@@ -17,14 +17,14 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
 
     //jahrgang selector
     // @ts-ignore
-    const [jahrgang, setJahrgang] = useState<string[]>(null);
+    const [grade, setGrade] = useState<string[]>(null);
     //datum selector
     // @ts-ignore
     const [date, setDate] = useState<string[]>(null);
 
-    //variables to set the values checked
-    let active = club ? club.active : true;
-    let talentPromotion = club ? club.active : false;
+    const [active, setActive] = useState(club ? club.active : true);
+
+    const [talentPromotion, setTalentPromotion] = useState(club ? club.talentPromotion : false)
 
     const form = useForm({
         initialValues: {
@@ -37,16 +37,31 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
             teacher: club?.teacher || "",
             talentPromotion: talentPromotion,
             active: active,
-        }
+        },
     })
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setLoading(true);
-        setError(null);
-        setTimeout(() => {
-            setLoading(false);
-            setError('User with this email does not exist !!dfdsr3');
-        }, 3000);
+
+        console.log(form.values);
+
+        await fetch("api/clubs", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form.values)
+        }).then(res => {
+            if (res.status === 200) {
+                setOpened(false);
+                setLoading(false);
+            } else {
+                res.json().then(data => {
+                    setError(data.error.message);
+                })
+                setLoading(false);
+            }
+        });
     };
 
     return (
@@ -59,7 +74,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                 size="lg"
             >
                 {
-                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                    <form onSubmit={form.onSubmit(handleSubmit)} >
                         <LoadingOverlay visible={loading}/>
 
                         <TextInput
@@ -97,10 +112,10 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             label="Jahrgang"
                             placeholder="5, 6, 7, 8, 9, 10, 11, 12"
                             variant="filled"
-                            value={form.getInputProps('grade') || jahrgang}
+                            value={form.getInputProps('grade') || grade}
                             onChange={
                                 (value) => {
-                                    setJahrgang(value.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)))
+                                    setGrade(value.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)))
                                 }}
                             mt="md"
                         />
@@ -154,22 +169,23 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                         />
 
                         <Checkbox
-                            required
                             label="Begabungsförderung"
                             mt="md"
                             checked={talentPromotion}
+                            onChange={(value) => {setTalentPromotion(!talentPromotion)}}
                         />
 
                         <Checkbox
-                            required
                             label="Aktiv"
                             mt="md"
                             checked={active}
+                            onChange={(value) => {setActive(!active)}}
                         />
 
                         <Button mt="md" color="blue" variant="outline" type="submit">
                             Erstellen
                         </Button>
+                        {error && <Alert variant="filled" color="red" mt="sm" title="Fehler!">{error}</Alert>}
                     </form>
                 }
             </Modal>
