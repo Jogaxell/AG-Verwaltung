@@ -33,7 +33,7 @@ export default function Overview(props: any) {
     //sort alphabetically
     clubs = clubs.sort((a, b) => a.name.localeCompare(b.name))
     // @ts-ignore
-    const ownClubs: Club[] = clubs.filter(club => club.teacher.includes(session.user?.name))
+    const ownClubs: Club[] = clubs.filter(club => club.teacher.some(teacher => teacher.toLowerCase() === session.user?.name?.toLowerCase()))
 
 
     return (
