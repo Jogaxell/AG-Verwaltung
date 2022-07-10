@@ -30,8 +30,8 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
         initialValues: {
             titel: club?.name || "",
             description: club?.description || "",
-            grade: club?.grade || "",
-            date: club?.date || "",
+            grade: club?.grade || [""],
+            date: club?.date || [""],
             lesson: club?.lesson || "",
             room: club?.room || "",
             teacher: club?.teacher || "",
