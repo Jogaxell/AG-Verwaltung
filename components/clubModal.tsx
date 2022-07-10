@@ -2,6 +2,7 @@ import {Alert, Button, Checkbox, LoadingOverlay, Modal, MultiSelect, Textarea, T
 import {useState} from "react";
 import {useForm} from "@mantine/form";
 import {Club} from "../models/club";
+import Router from 'next/router'
 
 
 //https://github.com/mantinedev/mantine/blob/v5/src/mantine-demos/src/shared/AuthenticationForm/AuthenticationForm.tsx
@@ -43,7 +44,10 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
     const handleSubmit = async () => {
         setLoading(true);
 
-        console.log(form.values);
+        form.values.date = date
+        form.values.grade = grade
+
+        console.log(form.values)
 
         await fetch("api/clubs", {
             method: "post",
@@ -55,6 +59,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
             if (res.status === 200) {
                 setOpened(false);
                 setLoading(false);
+                Router.replace(Router.asPath)
             } else {
                 res.json().then(data => {
                     setError(data.error.message);
