@@ -1,4 +1,4 @@
-import {Divider, Menu, Spoiler, Table} from "@mantine/core";
+import {Checkbox, Divider, Menu, Spoiler, Table} from "@mantine/core";
 import {Copy, Pencil, Trash} from "tabler-icons-react";
 import {Club} from "../models/club";
 import DateFormatter from "./dateFormatter";
@@ -18,7 +18,7 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
             <td>{element.lesson}</td>
             <td>{element.room}</td>
             <td>{element.teacher.join(", ")}</td>
-            <td>{element.talentPromotion ? "Ja" : "Nein"}</td>
+            <td><Checkbox checked={element.talentPromotion}/></td>
             <td>
                 {menu && <>
                     <Menu>
