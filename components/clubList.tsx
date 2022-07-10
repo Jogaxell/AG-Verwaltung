@@ -1,5 +1,7 @@
 import {Divider, Menu, Spoiler, Table} from "@mantine/core";
 import {Copy, Pencil, Trash} from "tabler-icons-react";
+import {Club} from "../models/club";
+import DateFormatter from "./dateFormatter";
 
 // @ts-ignore
 export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: boolean }) {
@@ -12,8 +14,8 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
             <td><Spoiler maxHeight={50} hideLabel="Weniger" showLabel="Mehr anzeigen"
                          styles={{control: {fontSize: "14px"}}}>{element.description}</Spoiler></td>
             <td>{element.grade.join(", ")}</td>
-            <td>{element.date}</td>
-            <td>{element.lesson.join(", ")}</td>
+            <td><DateFormatter date={element.date}/></td>
+            <td>{element.lesson}</td>
             <td>{element.room}</td>
             <td>{element.teacher}</td>
             <td>{element.talentPromotion ? "Ja" : "Nein"}</td>
