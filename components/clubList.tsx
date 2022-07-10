@@ -17,7 +17,7 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
             <td><DateFormatter date={element.date}/></td>
             <td>{element.lesson}</td>
             <td>{element.room}</td>
-            <td>{element.teacher}</td>
+            <td>{element.teacher.join(", ")}</td>
             <td>{element.talentPromotion ? "Ja" : "Nein"}</td>
             <td>
                 {menu && <>
