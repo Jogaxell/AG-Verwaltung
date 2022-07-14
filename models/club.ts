@@ -4,7 +4,7 @@ import {Document, Schema} from "mongoose";
 export interface Club extends Document {
     name: string,
     description: string,
-    grade: number[],
+    grade: string[],
     date: string[],
     lesson: string,
     room: string,
@@ -16,7 +16,7 @@ export interface Club extends Document {
 const ClubsSchema: Schema = new Schema({
     name: {type: String, required: true},
     description: {type: String, required: true},
-    grade: {type: [Number], required: true},
+    grade: {type: [String], required: true},
     date: {type: [String], required: true},
     lesson: {type: String, required: true},
     room: {type: String, required: true},

@@ -17,8 +17,8 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
     const [error, setError] = useState<string>(null);
 
     //jahrgang selector
-    // @ts-ignore
-    const [grade, setGrade] = useState<string[]>(null);
+    const [grade, setGrade] = useState<string[] | undefined>(club?.grade);
+
     //datum selector
     // @ts-ignore
     const [date, setDate] = useState<string[]>(null);
@@ -117,7 +117,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             label="Jahrgang"
                             placeholder="5, 6, 7, 8, 9, 10, 11, 12"
                             variant="filled"
-                            value={form.getInputProps('grade') || grade}
+                            value={grade}
                             onChange={
                                 (value) => {
                                     setGrade(value.sort((a, b) => Number.parseInt(a) - Number.parseInt(b)))
@@ -137,7 +137,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                                 {label: "nach Vereinbarung", value: "9"}]}
                             label="Datum"
                             variant="filled"
-                            value={form.getInputProps('date') || date}
+                            value={date}
                             onChange={(value) => {
                                 setDate(value.sort())
                             }}
