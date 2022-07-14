@@ -5,9 +5,10 @@ import LoginBtn from "../components/login-btn";
 import {GetServerSideProps} from "next";
 import {Club} from "../models/club";
 import ClubList from "../components/clubList";
-import {Badge} from '@mantine/core';
+import {Badge, Button} from '@mantine/core';
 import {useState} from "react";
 import ClubModal from "../components/clubModal";
+import {NotificationsProvider} from '@mantine/notifications';
 
 
 export default function Overview(props: any) {
@@ -32,8 +33,12 @@ export default function Overview(props: any) {
 
     //sort alphabetically
     clubs = clubs.sort((a, b) => a.name.localeCompare(b.name))
+
+    const disabledClubs = clubs.filter((club) => !club.active);
+    clubs = clubs.filter((club) => club.active);
+
     // @ts-ignore
-    const ownClubs: Club[] = clubs.filter(club => club.teacher.some(teacher => teacher.toLowerCase() === session.user?.name?.toLowerCase()))
+    const ownClubs: Club[] = clubs.filter(club => (club.teacher.some(teacher => teacher.toLowerCase() === session.user?.name?.toLowerCase())) || club.teacher.some(teacher => teacher.toLowerCase().includes(session.user?.name?.split(" ")[1].toLowerCase())))
 
 
     return (
@@ -43,33 +48,60 @@ export default function Overview(props: any) {
                 <link rel="icon" href="/cropped-wglogo-512x512.png"/>
             </Head>
 
+            {opened &&
+                <ClubModal onClose={
+                    () => {
+                        setOpened(false)
+                    }
+                }/>
+            }
+
             <main>
-                <div className="flex">
-                    <Sidebar/>
-                    <div>
-                        <div className="float-right m-4">
-                            <ClubModal buttonName={"Neue AG"}/>
-                        </div>
+                <NotificationsProvider>
+                    <div className="flex">
+                        <Sidebar/>
                         <div>
-                            {ownClubs.length > 0 &&
-                                <>
-                                    <h1 className="p-4 text-3xl font-bold py-5">
-                                        Eigene AGs
-                                        <Badge className="m-2 align-middle">{ownClubs.length}</Badge>
-                                    </h1>
-                                    <ClubList clubs={ownClubs}/>
-                                </>
-                            }
-                        </div>
-                        <div>
-                            <h1 className="p-4 text-3xl font-bold pb-5">
-                                Alle AGs
-                                <Badge className="m-2 align-middle">{clubs.length}</Badge>
-                            </h1>
-                            <ClubList clubs={clubs} menu={false}/>
+                            <div className="float-right m-4">
+                                <Button onClick={() => {
+                                    setOpened(true);
+                                }} variant="outline" radius="md"
+                                        size="md">
+                                    Neue AG
+                                </Button>
+                            </div>
+                            <div>
+                                {/*ownClubs.length > 0 &&
+                                    <>
+                                        <h1 className="p-4 text-3xl font-bold py-5">
+                                            Eigene AGs
+                                            <Badge className="m-2 align-middle">{ownClubs.length}</Badge>
+                                        </h1>
+                                        <ClubList clubs={ownClubs}/>
+                                    </>
+                                */}
+                            </div>
+                            <div>
+                                <h1 className="p-4 text-3xl font-bold pb-5">
+                                    Alle AGs
+                                    <Badge className="m-2 align-middle">{clubs.length}</Badge>
+                                </h1>
+                                <ClubList clubs={clubs} menu={true}/>
+                            </div>
+                            <div>
+                                {disabledClubs.length > 0 &&
+                                    <>
+                                        <h1 className="p-4 text-3xl font-bold pb-5">
+                                            Deaktivierte AGs
+                                            <Badge className="m-2 align-middle">{disabledClubs.length}</Badge>
+                                        </h1>
+                                        <ClubList clubs={disabledClubs} menu={true}/>
+                                        {/*TODO: show button to reactivate*/}
+                                    </>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                </NotificationsProvider>
             </main>
         </div>
     )
@@ -82,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const Club = require('../models/club');
 
-    let result = await Club.find().limit(10).exec();
+    let result = await Club.find().exec();
 
     result = JSON.stringify(result)
 

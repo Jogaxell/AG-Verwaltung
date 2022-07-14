@@ -1,10 +1,15 @@
 import {Checkbox, Divider, Menu, Spoiler, Table} from "@mantine/core";
-import {Copy, Pencil, Trash} from "tabler-icons-react";
+import {Check, Copy, Pencil, Trash} from "tabler-icons-react";
 import {Club} from "../models/club";
 import DateFormatter from "./dateFormatter";
+import Router from "next/router";
+import {showNotification} from "@mantine/notifications";
+import {useState} from "react";
+import ClubModal from "./clubModal";
 
 // @ts-ignore
 export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: boolean }) {
+    const [selectedClub, setSelectedClub] = useState<Club | null>(null);
     //sort alphabetically
     clubs = clubs.sort((a, b) => a.name.localeCompare(b.name))
 
@@ -22,9 +27,12 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
             <td>
                 {menu && <>
                     <Menu>
-                        <Menu.Item onClick={() => console.log('Hello please edit haheh')}
-                                   icon={<Pencil size={14}/>}>Bearbeiten</Menu.Item>
-
+                        <Menu.Item icon={<Pencil size={14}/>} onClick={
+                            () => {
+                                setSelectedClub(element)
+                            }
+                        }>Bearbeiten</Menu.Item>
+                        
                         <Divider/>
 
                         <Menu.Item onClick={async () => {
@@ -59,6 +67,9 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
     ));
     return (
         <>
+            {
+                selectedClub && <ClubModal club={selectedClub} onClose={() => setSelectedClub(null)}/>
+            }
             <Table highlightOnHover>
                 <thead>
                 <tr>

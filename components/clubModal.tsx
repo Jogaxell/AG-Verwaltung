@@ -3,29 +3,23 @@ import {useState} from "react";
 import {useForm} from "@mantine/form";
 import {Club} from "../models/club";
 import Router from 'next/router'
+import {showNotification} from "@mantine/notifications";
+import {Check} from "tabler-icons-react";
 
-
-//https://github.com/mantinedev/mantine/blob/v5/src/mantine-demos/src/shared/AuthenticationForm/AuthenticationForm.tsx
-//https://mantine.dev/core/modal/
-//https://github.com/mantinedev/mantine/tree/v5/src/mantine-demos/src
-
-export default function ClubModal({club, buttonName}: { club?: Club, buttonName: string }) {
-    const [opened, setOpened] = useState(false);
-
+export default function ClubModal({club, onClose}: { club?: Club, onClose: () => void }) {
     const [loading, setLoading] = useState(false);
-    // @ts-ignore
-    const [error, setError] = useState<string>(null);
+    const [error, setError] = useState<string | undefined>();
 
     //jahrgang selector
     const [grade, setGrade] = useState<string[] | undefined>(club?.grade);
 
     //datum selector
-    // @ts-ignore
-    const [date, setDate] = useState<string[]>(null);
+    const [date, setDate] = useState<string[]| undefined>(club?.date);
 
     const [active, setActive] = useState(club ? club.active : true);
 
     const [talentPromotion, setTalentPromotion] = useState(club ? club.talentPromotion : false)
+
 
     const form = useForm({
         initialValues: {
@@ -46,36 +40,74 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
 
         form.values.date = date
         form.values.grade = grade
+        form.values.talentPromotion = talentPromotion
+        form.values.active = active
 
         console.log(form.values)
 
-        await fetch("api/clubs", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form.values)
-        }).then(res => {
-            if (res.status === 200) {
-                setOpened(false);
-                setLoading(false);
-                Router.replace(Router.asPath)
-            } else {
-                res.json().then(data => {
-                    setError(data.error.message);
+        if(club) {
+            await fetch("api/clubs", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: club._id,
+                    club: form.values,
                 })
-                setLoading(false);
-            }
-        });
+            }).then(res => {
+                if (res.status === 200) {
+                    onClose();
+                    setLoading(false);
+                    showNotification({
+                        color: 'teal',
+                        title: 'Erfolgreich',
+                        message: 'AG wurde bearbeitet!',
+                        icon: <Check size={16} />,
+                    })
+                    Router.replace(Router.asPath)
+                } else {
+                    res.json().then(data => {
+                        setError(data.message);
+                    })
+                    setLoading(false);
+                }
+            });
+        }else {
+            await fetch("api/clubs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form.values)
+            }).then(res => {
+                if (res.status === 200) {
+                    onClose();
+                    setLoading(false);
+                    showNotification({
+                        color: 'teal',
+                        title: 'Erfolgreich',
+                        message: 'AG wurde erfolgreich erstellt!',
+                        icon: <Check size={16} />,
+                    })
+                    Router.replace(Router.asPath)
+                } else {
+                    res.json().then(data => {
+                        setError(data.message);
+                    })
+                    setLoading(false);
+                }
+            });
+        }
     };
 
     return (
         <>
 
             <Modal
-                opened={opened}
-                onClose={() => setOpened(false)}
-                title="Neue AG erstellen"
+                opened={true}
+                onClose={() => onClose()}
+                title={club ? "AG bearbeiten" : "AG erstellen"}
                 size="lg"
             >
                 {
@@ -167,7 +199,7 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                             required
                             label="Lehrer"
                             description="Vorname Nachname"
-                            placeholder="Volker Ovelgönne"
+                            placeholder="Volker Ovelgönne / Herr Overlgönne"
                             variant="filled"
                             mt="md"
                             {...form.getInputProps('teacher')}
@@ -188,20 +220,12 @@ export default function ClubModal({club, buttonName}: { club?: Club, buttonName:
                         />
 
                         <Button mt="md" color="blue" variant="outline" type="submit">
-                            Erstellen
+                            {club ? "Änderungen speichern" : "Erstellen"}
                         </Button>
                         {error && <Alert variant="filled" color="red" mt="sm" title="Fehler!">{error}</Alert>}
                     </form>
                 }
             </Modal>
-
-
-            <Button onClick={() => {
-                setOpened(true);
-            }} variant="outline" radius="md"
-                    size="md">
-                {buttonName}
-            </Button>
 
         </>
     )
