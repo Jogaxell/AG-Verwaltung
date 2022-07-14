@@ -27,8 +27,31 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
 
                         <Divider/>
 
-                        <Menu.Item icon={<Copy size={14}/>}>Kopieren</Menu.Item>
-                        <Menu.Item color="red" icon={<Trash size={14}/>}>Löschen</Menu.Item>
+                        <Menu.Item onClick={async () => {
+                            await fetch("api/clubs", {
+                                method: "delete",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({name: element.name})
+                            }).then(res => {
+                                if (res.status === 200) {
+                                    showNotification({
+                                        color: 'teal',
+                                        title: 'Erfolgreich',
+                                        message: 'AG wurde erfolgreich gelöscht!',
+                                        icon: <Check size={16} />,
+                                    })
+                                    Router.replace(Router.asPath)
+                                }else {
+                                    showNotification({
+                                        color: 'red',
+                                        title: 'Fehler',
+                                        message: 'Es ist etwas schief gelaufen: ' + res.statusText,
+                                    })
+                                }
+                            });
+                        }} color="red" icon={<Trash size={14}/>}>Löschen</Menu.Item>
                     </Menu>
                 </>}
             </td>
