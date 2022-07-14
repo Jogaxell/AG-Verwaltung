@@ -1,5 +1,5 @@
 import {Checkbox, Divider, Menu, Spoiler, Table} from "@mantine/core";
-import {Check, Copy, Pencil, Trash} from "tabler-icons-react";
+import {Check, Copy, Pencil, Power, Trash} from "tabler-icons-react";
 import {Club} from "../models/club";
 import DateFormatter from "./dateFormatter";
 import Router from "next/router";
@@ -8,7 +8,11 @@ import {useState} from "react";
 import ClubModal from "./clubModal";
 
 // @ts-ignore
-export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: boolean }) {
+export default function ClubList({
+                                     clubs,
+                                     menu = true,
+                                     reactivate = false
+                                 }: { clubs: Club[], menu?: boolean, reactivate?: boolean }) {
     const [selectedClub, setSelectedClub] = useState<Club | null>(null);
     //sort alphabetically
     clubs = clubs.sort((a, b) => a.name.localeCompare(b.name))
@@ -32,12 +36,40 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
                                 setSelectedClub(element)
                             }
                         }>Bearbeiten</Menu.Item>
-                        
+
+                        {reactivate &&
+                            <Menu.Item icon={<Power size={14}/>} onClick={async () => {
+                                await fetch("api/clubs", {
+                                    method: "PATCH",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({id: element._id, reactivate: !element.active})
+                                }).then(res => {
+                                    if (res.status === 200) {
+                                        showNotification({
+                                            color: 'teal',
+                                            title: 'Erfolgreich',
+                                            message: 'AG wurde erfolgreich reaktiviert!',
+                                            icon: <Check size={16}/>,
+                                        })
+                                        Router.replace(Router.asPath)
+                                    } else {
+                                        showNotification({
+                                            color: 'red',
+                                            title: 'Fehler',
+                                            message: 'Es ist etwas schief gelaufen: ' + res.statusText,
+                                        })
+                                    }
+                                });
+                            }}>Reaktivieren</Menu.Item>
+                        }
+
                         <Divider/>
 
                         <Menu.Item onClick={async () => {
                             await fetch("api/clubs", {
-                                method: "delete",
+                                method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
@@ -48,10 +80,10 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
                                         color: 'teal',
                                         title: 'Erfolgreich',
                                         message: 'AG wurde erfolgreich gelöscht!',
-                                        icon: <Check size={16} />,
+                                        icon: <Check size={16}/>,
                                     })
                                     Router.replace(Router.asPath)
-                                }else {
+                                } else {
                                     showNotification({
                                         color: 'red',
                                         title: 'Fehler',

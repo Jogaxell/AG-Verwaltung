@@ -94,8 +94,7 @@ export default function Overview(props: any) {
                                             Deaktivierte AGs
                                             <Badge className="m-2 align-middle">{disabledClubs.length}</Badge>
                                         </h1>
-                                        <ClubList clubs={disabledClubs} menu={true}/>
-                                        {/*TODO: show button to reactivate*/}
+                                        <ClubList clubs={disabledClubs} menu={true} reactivate={true}/>
                                     </>
                                 }
                             </div>

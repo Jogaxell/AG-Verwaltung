@@ -77,9 +77,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         console.log(req.body)
+        const {id, reactivate} = req.body
+        if(reactivate != undefined) {
+            const Club = require('../../models/club')
+            const updatedClub = await Club.updateOne({_id: id}, {active: reactivate})
+            return res.status(200).json({message: 'Success'})
+        }
 
         let {titel, description, grade, date, lesson, room, teacher, talentPromotion, active} = req.body.club
-        const {id} = req.body
         if (!titel || !description || !grade || !date || !lesson || !room || !teacher || talentPromotion == undefined || active == undefined) {
             res.status(400).send({
                 success: false,
