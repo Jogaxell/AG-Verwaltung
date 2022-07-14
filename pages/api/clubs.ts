@@ -55,11 +55,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(401).json({message: "You must be logged in."});
             return;
         }
-        //TODO: delete by id not by naem!!! IMPORTANT
-        const {name} = req.body
+        const {id} = req.body
 
         const Club = require('../../models/club')
-        const deletedClub = await Club.deleteOne({name: name})
+        const deletedClub = await Club.deleteOne({_id: id})
         res.status(200).json({message: 'Success'})
     } else if (req.method === "PATCH") {
         if (!req.body) {

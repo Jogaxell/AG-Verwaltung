@@ -41,7 +41,7 @@ export default function ClubList({clubs, menu = true}: { clubs: Club[], menu?: b
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
-                                body: JSON.stringify({name: element.name})
+                                body: JSON.stringify({id: element._id})
                             }).then(res => {
                                 if (res.status === 200) {
                                     showNotification({
