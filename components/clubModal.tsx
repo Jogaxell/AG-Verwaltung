@@ -46,7 +46,7 @@ export default function ClubModal({club, onClose}: { club?: Club, onClose: () =>
         console.log(form.values)
 
         if(club) {
-            await fetch("api/clubs", {
+            await fetch("/api/clubs", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export default function ClubModal({club, onClose}: { club?: Club, onClose: () =>
                 }
             });
         }else {
-            await fetch("api/clubs", {
+            await fetch("/api/clubs", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

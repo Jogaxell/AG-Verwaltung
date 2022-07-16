@@ -39,7 +39,7 @@ export default function ClubList({
 
                         {reactivate &&
                             <Menu.Item icon={<Power size={14}/>} onClick={async () => {
-                                await fetch("api/clubs", {
+                                await fetch("/api/clubs", {
                                     method: "PATCH",
                                     headers: {
                                         "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export default function ClubList({
                         <Divider/>
 
                         <Menu.Item onClick={async () => {
-                            await fetch("api/clubs", {
+                            await fetch("/api/clubs", {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
