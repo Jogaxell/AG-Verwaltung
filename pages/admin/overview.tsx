@@ -1,13 +1,13 @@
 import Head from 'next/head'
-import Sidebar from '../components/sidebar'
+import AdminSidebar from '../../components/adminSidebar'
 import {useSession} from "next-auth/react"
-import LoginBtn from "../components/login-btn";
+import LoginBtn from "../../components/login-btn";
 import {GetServerSideProps} from "next";
-import {Club} from "../models/club";
-import ClubList from "../components/clubList";
+import {Club} from "../../models/club";
+import ClubList from "../../components/clubList";
 import {Badge, Button} from '@mantine/core';
 import {useState} from "react";
-import ClubModal from "../components/clubModal";
+import ClubModal from "../../components/clubModal";
 import {NotificationsProvider} from '@mantine/notifications';
 
 
@@ -59,7 +59,7 @@ export default function Overview(props: any) {
             <main>
                 <NotificationsProvider>
                     <div className="flex">
-                        <Sidebar/>
+                        <AdminSidebar/>
                         <div>
                             <div className="float-right m-4">
                                 <Button onClick={() => {
@@ -111,7 +111,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     let mongoose = require('mongoose');
     await mongoose.connect(process.env.MONGO_URI);
 
-    const Club = require('../models/club');
+    const Club = require('../../models/club');
 
     let result = await Club.find().exec();
 

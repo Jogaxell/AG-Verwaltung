@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 
 // @ts-ignore
-export default function SidebarEntry({name, link, icon, addition}) {
+export default function AdminSidebarEntry({name, link, icon, addition}) {
     const router = useRouter()
     const style = {backgroundColor: router.route == link ? "#d1d5db" : ""}
     return (

@@ -1,26 +1,12 @@
 import type {NextPage} from 'next'
 import Head from 'next/head'
-import Sidebar from '../components/sidebar'
 import {useSession} from "next-auth/react"
 import LoginBtn from "../components/login-btn";
+import Link from "next/link";
 
 const Home: NextPage = () => {
     const {data: session, status} = useSession()
-    if (status === 'loading') {
-        return (<></>)
-    }
-    if (!session) {
-        return (
-            <>
-                <div className="flex flex-col items-center justify-center h-screen">
-                    <h1 className="text-3xl font-bold text-center pb-5">
-                        Nicht eingeloggt
-                    </h1>
-                    <LoginBtn/>
-                </div>
-            </>
-        )
-    }
+
     return (
         <div>
             <Head>
@@ -29,14 +15,18 @@ const Home: NextPage = () => {
             </Head>
 
             <main>
-                <div className="flex">
-                    <Sidebar/>
-                    <div className="flex flex-col h-screen">
-                        <h1 className="p-4 text-3xl font-bold text-center pb-5">
-                            Willkommen zurück <b>{session.user?.name}</b>
-                        </h1>
-                    </div>
-                </div>
+                <h1 className="p-4 text-3xl font-bold text-center pb-5">
+                    Willkommen
+                </h1>
+
+                <LoginBtn/>
+
+                {session &&
+                <div>
+                    {session.user?.name}
+                    <br/>
+                    <Link href="/admin/">ADMIN</Link>
+                </div>}
             </main>
         </div>
     )
