@@ -1,5 +1,5 @@
-import {Checkbox, Divider, Menu, Spoiler, Table} from "@mantine/core";
-import {Check, Copy, Pencil, Power, Trash} from "tabler-icons-react";
+import {Checkbox, Divider, Menu, Spoiler, Table, Text, Textarea} from "@mantine/core";
+import {Check, Copy, Pencil, Power, TextWrap, Trash} from "tabler-icons-react";
 import {Club} from "../models/club";
 import DateFormatter from "./dateFormatter";
 import Router from "next/router";
@@ -21,7 +21,7 @@ export default function ClubList({
         <tr key={element.name}>
             <td>{element.name}</td>
             <td><Spoiler maxHeight={50} hideLabel="Weniger" showLabel="Mehr anzeigen"
-                         styles={{control: {fontSize: "14px"}}}>{element.description}</Spoiler></td>
+                         styles={{control: {fontSize: "14px"}}}><div dangerouslySetInnerHTML={{ __html: element.description.replaceAll("\n", "<br/>") }} ></div></Spoiler></td>
             <td>{element.grade.join(", ")}</td>
             <td><DateFormatter date={element.date}/></td>
             <td>{element.lesson}</td>
@@ -53,7 +53,11 @@ export default function ClubList({
                                             message: 'AG wurde erfolgreich reaktiviert!',
                                             icon: <Check size={16}/>,
                                         })
+                                        let positionY = window.scrollY
                                         Router.replace(Router.asPath)
+                                        setTimeout(() => {
+                                            window.scroll({top: positionY, behavior: 'smooth'})
+                                        }, 400)
                                     } else {
                                         showNotification({
                                             color: 'red',
@@ -82,7 +86,11 @@ export default function ClubList({
                                         message: 'AG wurde erfolgreich gelöscht!',
                                         icon: <Check size={16}/>,
                                     })
+                                    let positionY = window.scrollY
                                     Router.replace(Router.asPath)
+                                    setTimeout(() => {
+                                        window.scroll({top: positionY, behavior: 'smooth'})
+                                    }, 400)
                                 } else {
                                     showNotification({
                                         color: 'red',
