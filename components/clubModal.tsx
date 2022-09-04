@@ -65,7 +65,11 @@ export default function ClubModal({club, onClose}: { club?: Club, onClose: () =>
                         message: 'AG wurde bearbeitet!',
                         icon: <Check size={16} />,
                     })
+                    let positionY = window.scrollY
                     Router.replace(Router.asPath)
+                    setTimeout(() => {
+                        window.scroll({top: positionY, behavior: 'smooth'})
+                    }, 400)
                 } else {
                     res.json().then(data => {
                         setError(data.message);
@@ -90,7 +94,11 @@ export default function ClubModal({club, onClose}: { club?: Club, onClose: () =>
                         message: 'AG wurde erfolgreich erstellt!',
                         icon: <Check size={16} />,
                     })
+                    let positionY = window.scrollY
                     Router.replace(Router.asPath)
+                    setTimeout(() => {
+                        window.scroll({top: positionY, behavior: 'smooth'})
+                    }, 400)
                 } else {
                     res.json().then(data => {
                         setError(data.message);
